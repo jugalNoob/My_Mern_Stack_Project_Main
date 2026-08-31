@@ -7,3 +7,11 @@ export const router = express.Router()
 router.get('/get',  getUsersWithQuery )
 router.get('/analyseapi' , getsearch)
 router.get('/ai' , aiagent)
+
+
+router.get("/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Latest backend is running"
+  });
+});
