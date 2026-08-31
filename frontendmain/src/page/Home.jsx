@@ -60,6 +60,17 @@ function Home() {
           <FaEdit />
           <span>Update</span>
         </NavLink>
+
+
+        
+  <NavLink
+          to="/agent"
+          className={({ isActive }) => (isActive ? "nav-item active" : "nav-item")}
+        >
+          <FaEdit />
+          <span>agent</span>
+        </NavLink>
+       
        
       </div>
     </nav>

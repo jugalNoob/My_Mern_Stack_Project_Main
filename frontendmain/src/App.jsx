@@ -9,7 +9,7 @@ import Home from "./page/Home"
 import Update from './page/Update_User/Update'
 import Detele from './page/Delete_Api/Detele'
 import AnalyseP from './page/Analyse_Api/AnalyseP'
-
+import Agent from './page/ai_Agent/Agent'
 
 const router=createBrowserRouter([  /// install react router https://medium.com/@adebayosilas/introduction-to-react-router-v6-4-6-11-1-f56c7710282e
   
@@ -44,6 +44,11 @@ const router=createBrowserRouter([  /// install react router https://medium.com/
   {
     path:'/anayles',
     element:<AnalyseP/>
+  }
+,
+  {
+    path:'/agent',
+    element:<Agent/>
   }
 
 
