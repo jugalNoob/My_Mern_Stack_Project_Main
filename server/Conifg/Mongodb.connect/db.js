@@ -4,9 +4,9 @@ import  { retryConnect } from '../../Utils/Retry/connect.mongodb.js'
 
 
 export const connectMongo = async () => {
-  const MONGO_URI ='mongodb+srv://jugal786:jugal786@cluster0.sgg8t.mongodb.net/ones?retryWrites=true&w=majority'
-
-  console.log("Mongo URI exists:", !!process.env.DATABASE);
+  const MONGO_URI =process.env.MONGO_URL
+console.log(MONGO_URI)
+  console.log("Mongo URI exists:", !!process.env.MONGO_URL);
   try {
 
      await retryConnect(() =>

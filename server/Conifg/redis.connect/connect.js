@@ -1,41 +1,13 @@
 import Redis from "ioredis";
 
-const redisUrl =
-  process.env.REDIS_URL || "redis://127.0.0.1:6379";
-
-// Main client
-const redisClient = new Redis(redisUrl);
-
-// Publisher
-export const redisPub = new Redis(redisUrl);
-
-// Subscriber
-export const redisSub = new Redis(redisUrl);
-
-// Connection logs
+const redisClient = new Redis(process.env.REDIS_URL);
+console.log(process.env.REDIS_URL)
 redisClient.on("connect", () => {
-  console.log("✅ Redis Main Connected");
+  console.log("✅ Successfully connected to Redis!");
 });
 
-redisPub.on("connect", () => {
-  console.log("✅ Redis Publisher Connected");
-});
-
-redisSub.on("connect", () => {
-  console.log("✅ Redis Subscriber Connected");
-});
-
-// Error handling
 redisClient.on("error", (err) => {
-  console.error("❌ Redis Main Error:", err.message);
-});
-
-redisPub.on("error", (err) => {
-  console.error("❌ Redis Pub Error:", err.message);
-});
-
-redisSub.on("error", (err) => {
-  console.error("❌ Redis Sub Error:", err.message);
+  console.error("❌ Redis Error:", err);
 });
 
 export default redisClient;
