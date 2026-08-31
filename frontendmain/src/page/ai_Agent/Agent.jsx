@@ -25,7 +25,7 @@ function AiAgent() {
       setSource("");
 
       const res = await axios.get(
-        "http://localhost:9000/ai",
+        "https://my-mern-stack-project-main.onrender.com/ai",
         {
           params: {
             question: question.trim(),
