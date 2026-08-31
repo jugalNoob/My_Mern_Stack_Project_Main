@@ -24,8 +24,8 @@ function AnalyseP() {
     try {
       setLoading(true);
       setError("");
-
-      const res = await axios.get("http://localhost:9000/analyseapi");
+// https://my-mern-stack-project-main.onrender.com/analyseapi
+      const res = await axios.get("https://my-mern-stack-project-main.onrender.com/analyseapi");
       const data = res.data?.data?.[0] || {};
 
       // documentCount may be [{countDocument}] or {countDocument}

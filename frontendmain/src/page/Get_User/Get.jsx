@@ -61,7 +61,7 @@ const Get = () => {
         Object.entries(query).filter(([, v]) => v !== "" && v !== null)
       );
 
-      const res = await axios.get("http://localhost:9000/get", {
+      const res = await axios.get("https://my-mern-stack-project-main.onrender.com/get", {
         params,
         signal: controller.signal,
       });
