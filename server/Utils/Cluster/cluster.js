@@ -5,7 +5,9 @@ import mongoose from "mongoose";
 import { connectMongo } from "../../Conifg/Mongodb.connect/db.js";
 import redisClient from "../../Conifg/redis.connect/connect.js";
 
-const numCPUs = os.cpus().length;
+// const numCPUs = os.cpus().length;
+
+ const numCPUs = 1;
 const port = process.env.PORT || 9000;
 
 if (cluster.isPrimary) {

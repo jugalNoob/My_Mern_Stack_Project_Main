@@ -1,23 +1,16 @@
 import Redis from "ioredis";
 
-const redisConfig = {
-  host: process.env.REDIS_HOST || "127.0.0.1",
-  port: process.env.REDIS_PORT || 6379,
-  maxRetriesPerRequest: null,
-  enableReadyCheck: true,
-  retryStrategy(times) {
-    return Math.min(times * 50, 2000);
-  }
-};
+const redisUrl =
+  process.env.REDIS_URL || "redis://127.0.0.1:6379";
 
 // Main client
-const redisClient = new Redis(redisConfig);
+const redisClient = new Redis(redisUrl);
 
 // Publisher
-export const redisPub = new Redis(redisConfig);
+export const redisPub = new Redis(redisUrl);
 
 // Subscriber
-export const redisSub = new Redis(redisConfig);
+export const redisSub = new Redis(redisUrl);
 
 // Connection logs
 redisClient.on("connect", () => {
