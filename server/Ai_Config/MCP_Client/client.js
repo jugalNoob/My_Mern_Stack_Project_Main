@@ -4,25 +4,24 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-
-
-
-
-const OLLAMA_URL = "http://localhost:11434/api/chat";
-const MODEL_NAME = "qwen2.5:1.5b";
-
-
+const OLLAMA_URL = process.env.OLLAMA_URL;
+const MODEL_NAME = process.env.OLLAMA_MODEL || "qwen2.5:1.5b";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function createMcpClient() {
-  // If your server code is in a separate file (e.g., server.js in the same folder):
-  const serverPath = path.resolve(__dirname, "../MPC_server/server.js");
+  const serverPath = path.resolve(
+    __dirname,
+    "../MPC_server/server.js"
+  );
 
   const transport = new StdioClientTransport({
-    command: "node",
-    args: [serverPath]
+    command: process.execPath,
+    args: [serverPath],
+    env: {
+      ...process.env
+    }
   });
 
   const client = new Client({
@@ -31,18 +30,23 @@ async function createMcpClient() {
   });
 
   await client.connect(transport);
+
   return client;
 }
 
-
 export async function runAgent(userPrompt) {
+
+  if (!OLLAMA_URL) {
+    throw new Error("OLLAMA_URL is not configured");
+  }
+
   const mcpClient = await createMcpClient();
 
   try {
-    // 1. Fetch available tools dynamically from MCP server
-    const { tools: mcpTools } = await mcpClient.listTools();
 
-    // 2. Format MCP tools into Ollama tool schema
+    const { tools: mcpTools } =
+      await mcpClient.listTools();
+
     const formattedTools = mcpTools.map((tool) => ({
       type: "function",
       function: {
@@ -54,55 +58,74 @@ export async function runAgent(userPrompt) {
 
     const messages = [
       {
+        role: "system",
+        content:
+          "You are a user database assistant. " +
+          "When the user asks for information about a user, " +
+          "use the available database tools. " +
+          "Do not invent user information."
+      },
+      {
         role: "user",
         content: userPrompt
       }
     ];
 
-    console.log(`\nUser: "${userPrompt}"`);
+    console.log(`User: "${userPrompt}"`);
 
-    // 3. First call to Ollama
-    const firstResponse = await axios.post(OLLAMA_URL, {
-      model: MODEL_NAME,
-      messages: messages,
-      tools: formattedTools,
-      stream: false
-    });
+    const firstResponse = await axios.post(
+      OLLAMA_URL,
+      {
+        model: MODEL_NAME,
+        messages,
+        tools: formattedTools,
+        stream: false
+      },
+      {
+        timeout: 120000
+      }
+    );
 
-    const assistantMessage = firstResponse.data.message;
+    const assistantMessage =
+      firstResponse.data.message;
+
     messages.push(assistantMessage);
 
-    // 4. Handle tool calls
-    if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
+    if (
+      assistantMessage.tool_calls &&
+      assistantMessage.tool_calls.length > 0
+    ) {
+
       for (const toolCall of assistantMessage.tool_calls) {
-        const toolName = toolCall.function.name;
-        
-        // Ensure arguments are parsed into an object
-        let toolArgs = toolCall.function.arguments;
+
+        const toolName =
+          toolCall.function.name;
+
+        let toolArgs =
+          toolCall.function.arguments;
+
         if (typeof toolArgs === "string") {
-          try {
-            toolArgs = JSON.parse(toolArgs);
-          } catch {
-            toolArgs = {};
-          }
+          toolArgs = JSON.parse(toolArgs);
         }
 
-        console.log(`\n[Agent] Executing tool: "${toolName}" with args:`, toolArgs);
+        console.log(
+          `[Agent] Executing ${toolName}`,
+          toolArgs
+        );
 
-        // Execute via MCP Client
-        const toolResult = await mcpClient.callTool({
-          name: toolName,
-          arguments: toolArgs
-        });
+        const toolResult =
+          await mcpClient.callTool({
+            name: toolName,
+            arguments: toolArgs
+          });
 
-        const outputText = toolResult.content
-          ?.filter((item) => item.type === "text")
-          .map((item) => item.text)
-          .join("\n") || "No output returned.";
+        const outputText =
+          toolResult.content
+            ?.filter(item => item.type === "text")
+            .map(item => item.text)
+            .join("\n") ||
+          "No output returned.";
 
-        console.log(`[MCP Server Result]: ${outputText}`);
-
-        // Append tool result
         messages.push({
           role: "tool",
           name: toolName,
@@ -110,24 +133,27 @@ export async function runAgent(userPrompt) {
         });
       }
 
-      // 5. Final synthesis call
-      const finalResponse = await axios.post(OLLAMA_URL, {
-        model: MODEL_NAME,
-        messages: messages,
-        stream: false
-      });
+      const finalResponse =
+        await axios.post(
+          OLLAMA_URL,
+          {
+            model: MODEL_NAME,
+            messages,
+            stream: false
+          },
+          {
+            timeout: 120000
+          }
+        );
 
-return finalResponse.data.message.content
-      console.log(`\nAI Assistant: ${finalResponse.data.message.content}`);
-    } else {
-
-      return assistantMessage.content
-      console.log(`\nAI Assistant: ${assistantMessage.content}`);
+      return finalResponse.data.message.content;
     }
+
+    return assistantMessage.content;
+
   } finally {
+
     await mcpClient.close();
+
   }
 }
-
-// Run query
-runAgent("what is xxx email").catch(console.error);
