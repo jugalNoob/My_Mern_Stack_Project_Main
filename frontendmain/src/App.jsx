@@ -10,6 +10,7 @@ import Update from './page/Update_User/Update'
 import Detele from './page/Delete_Api/Detele'
 import AnalyseP from './page/Analyse_Api/AnalyseP'
 import Agent from './page/ai_Agent/Agent'
+import Redis from './page/redis_DashBoard/Redis'
 
 const router=createBrowserRouter([  /// install react router https://medium.com/@adebayosilas/introduction-to-react-router-v6-4-6-11-1-f56c7710282e
   
@@ -49,6 +50,12 @@ const router=createBrowserRouter([  /// install react router https://medium.com/
   {
     path:'/agent',
     element:<Agent/>
+  }
+,
+
+  {
+    path:'/redis',
+    element:<Redis/>
   }
 
 

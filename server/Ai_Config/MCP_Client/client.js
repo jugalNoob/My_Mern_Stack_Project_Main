@@ -3,8 +3,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+const OLLAMA_URL =  process.env.OLLAMA_URL || "http://localhost:11434/api/chat";
 
-const OLLAMA_URL = process.env.OLLAMA_URL;
 const MODEL_NAME = process.env.OLLAMA_MODEL || "qwen2.5:1.5b";
 
 const __filename = fileURLToPath(import.meta.url);
