@@ -23,7 +23,7 @@ A simple REST API project built using the MERN stack with MongoDB and Redis cach
 
 ## Live Demo
 
-Frontend: https://frontendmain-git-master-jugalnoobs-projects.vercel.app/redis
+Frontend: https://frontendmain-git-master-jugalnoobs-projects.vercel.app
 
 ## Installation
 
@@ -47,7 +47,6 @@ Create a `.env` file:
 ```env
 PORT=5000
 MONGO_URI=your_mongodb_url
-JWT_SECRET=your_secret
 REDIS_URL=your_redis_url
 ```
 
