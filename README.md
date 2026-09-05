@@ -23,7 +23,7 @@ A simple REST API project built using the MERN stack with MongoDB and Redis cach
 
 ## Live Demo
 
-Frontend: https://frontendmain-five.vercel.app/
+Frontend: https://frontendmain-git-master-jugalnoobs-projects.vercel.app/redis
 
 ## Installation
 
